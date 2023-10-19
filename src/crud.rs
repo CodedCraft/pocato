@@ -31,10 +31,10 @@ pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError>
 }
 
 pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudError> {
-    let mut query = "SELECT * FROM tasks".to_string();
+    let mut query = "SELECT * FROM tasks WHERE status=false".to_string();
 
     if let Some(id) = id {
-        query.push_str(&format!(" WHERE id={}", id))
+        query.push_str(&format!(" AND id={}", id))
     }
 
     let mut stmt = conn.prepare(&query)?;
@@ -58,12 +58,23 @@ pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudEr
     }
 }
 
-pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
-         let task_exists = conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
+pub fn update_task(conn: &Connection, task_id: i64) -> Result<Task, CrudError> {
+    let query = format!("SELECT * FROM tasks WHERE id = {}", task_id);
+    let mut stmt = conn.prepare(&query)?;
+    let mut task_to_delete = stmt.query_map((), |row| {
+        Ok(Task {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            status: row.get(2)?,
+        })
+    })?;
 
-    match task_exists {
-        0 => return Err(CrudError::TaskNotFound("No such Task".to_string())),
-        _ => Ok(format!("Completed Task {}", task_id))
+    if let Some(task) = task_to_delete.next() {
+        conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
+        return Ok(task?);
+    }
+    else {
+        return Err(CrudError::TaskNotFound("No such Task".to_string()));
     }
 }
 

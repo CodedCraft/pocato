@@ -10,8 +10,10 @@ use lexer::lexer;
 // [ ] Displaying tasks in a nice way                                                              |
 // [ ] Id numbers are unwieldy (uuid)                                                              |
 // [ ] Checks for the existence of id numbers are missing                                          |
-// [ ] Finishing a task doesn't confirm the task name                                              |
 // [ ] Code is not dry                                                                             |
+// [ ] Add comments to functions or maybenot                                                       |
+// [x] Change the read_task method so it only shows tasks that are not finished                    |
+// [x] Finishing a task doesn't confirm the task name                                              |
 // [x] Code is (especially the CLI command handling) not yet separated out                         |
 // -------------------------------------------------------------------------------------------------
 
@@ -52,7 +54,7 @@ fn main() {
                 println!("{:?}", task);
             }
         }
-        Ok(lexer::LexerOk::Update(result)) => println!("{}", result),
+        Ok(lexer::LexerOk::Update(result)) => println!("Task finished: {:?}", result),
         Ok(lexer::LexerOk::Delete(result)) => println!("{}", result),
         Err(err) => println!("{}", err),
     }
