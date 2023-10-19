@@ -9,6 +9,7 @@ edition = "2021"
 clap = { version = "4.4.6", features = ["derive"] }
 # Bundle in SQLite and don't rely on the system binary:
 rusqlite = { version = "0.29.0", features = ["bundled"] } 
+thiserror = "1.0.49"
 
 [dependencies.uuid]
 uuid = "1.4.1"
