@@ -1,4 +1,5 @@
 use rusqlite::{Connection, Error};
+use std::fmt;
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -17,6 +18,18 @@ pub struct Task {
     pub status: bool,
 }
 
+impl fmt::Display for Task {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let status = if self.status {
+            "\x1b[32m\x1b[0m"
+        } else {
+            ""
+        };
+        let title = format!("\x1b[1;34m{}\x1b[0m", self.title);
+        write!(f, "{} {} (ID: {})", status, title, self.id)
+    }
+}
+
 pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError> {
     let task = Task {
         id: Uuid::new_v4 as i64,
@@ -31,7 +44,8 @@ pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError>
 }
 
 pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudError> {
-    let mut query = "SELECT * FROM tasks WHERE status=false".to_string();
+    // let mut query = "SELECT * FROM tasks WHERE status=false".to_string();
+    let mut query = "SELECT * FROM tasks".to_string();
 
     if let Some(id) = id {
         query.push_str(&format!(" AND id={}", id))
@@ -72,8 +86,7 @@ pub fn update_task(conn: &Connection, task_id: i64) -> Result<Task, CrudError> {
     if let Some(task) = task_to_delete.next() {
         conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
         return Ok(task?);
-    }
-    else {
+    } else {
         return Err(CrudError::TaskNotFound("No such Task".to_string()));
     }
 }
