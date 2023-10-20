@@ -13,6 +13,7 @@ pub enum CrudError {
 
 #[derive(Debug, Clone)]
 pub struct Task {
+    pub uuid: String,
     pub id: i64,
     pub title: String,
     pub status: bool,
@@ -25,20 +26,29 @@ impl fmt::Display for Task {
         } else {
             ""
         };
+        // NerdFont Signs for Future reference:
+        // --------------------------------------------------------------------
+        // Finished: 󰱒 (nf-md-checkbox_outline)
+        // Deleted:  󰛌 (nf-md-delete_empty)       󰅘 (nf-md-close_box_outline)
+        // Started:  󰛲 (nf-md-minus_box_outline)  󱗝 (nf-md-circle_box_outline)
+        // New:      󰿦 (nf-md-texture_box)        󰆢 (nf-md-crop_square)
+        // Project:   (nf-oct-project_roadmap)
+        // --------------------------------------------------------------------
         let title = format!("\x1b[1;34m{}\x1b[0m", self.title);
-        write!(f, "{} {} (ID: {})", status, title, self.id)
+        write!(f, "({})  {} {}",self.id, status, title)
     }
 }
 
 pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError> {
     let task = Task {
-        id: Uuid::new_v4 as i64,
+        id: 0,
+        uuid: Uuid::new_v4().to_string(),
         title,
         status: false,
     };
     let result = conn.execute(
-        "INSERT INTO tasks (id, title, status) VALUES (?1, ?2, ?3)",
-        (task.id, task.title.clone(), task.status),
+        "INSERT INTO tasks (uuid, title, status) VALUES (?1, ?2, ?3)",
+        (task.uuid, task.title.clone(), task.status),
     )?;
     Ok(result)
 }
@@ -54,9 +64,10 @@ pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudEr
     let mut stmt = conn.prepare(&query)?;
     let tasks = stmt.query_map((), |row| {
         Ok(Task {
-            id: row.get(0)?,
-            title: row.get(1)?,
-            status: row.get(2)?,
+            uuid: row.get(0)?,
+            id: row.get(1)?,
+            title: row.get(2)?,
+            status: row.get(3)?,
         })
     })?;
 
@@ -77,9 +88,10 @@ pub fn update_task(conn: &Connection, task_id: i64) -> Result<Task, CrudError> {
     let mut stmt = conn.prepare(&query)?;
     let mut task_to_delete = stmt.query_map((), |row| {
         Ok(Task {
-            id: row.get(0)?,
-            title: row.get(1)?,
-            status: row.get(2)?,
+            uuid: row.get(0)?,
+            id: row.get(1)?,
+            title: row.get(2)?,
+            status: row.get(3)?,
         })
     })?;
 
