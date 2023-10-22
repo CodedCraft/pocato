@@ -1,7 +1,7 @@
 // MVP version 0.1.0:
 // -------------------------------------------------------------------------------------------------
 // [ ] Code is not dry
-// [ ] Add comments to functions or maybenot
+// [ ] Add comments
 // [ ] Create Readme
 // [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()
 // [x] Id numbers are unwieldy (uuid)
@@ -13,67 +13,19 @@
 
 // Version 0.2.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Id numbers get renumbered on delete
+// [ ] Id numbers get renumbered on delete (Implement SQL Trigger)
 // [ ] Confirmation of deletion
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
 // -------------------------------------------------------------------------------------------------
 
-use rusqlite::{Connection, Error, Result};
-
 mod crud;
 mod lexer;
-use lexer::lexer;
+mod database;
 
 fn main() {
-    // Initialize SQLite Database ------------------------------------------------------------------
-    let database_init = init_db();
-    let conn: Connection;
+    // Establish SQLite Database connection
+    let conn = database::init_db();
 
-    match database_init {
-        Ok(connection) => {
-            conn = connection;
-        }
-        Err(err) => panic!("Could not initialize Database: {}", err),
-    }
-    // ---------------------------------------------------------------------------------------------
-
-    let command_result = lexer(&conn);
-
-    match command_result {
-        Ok(lexer::LexerOk::Create(rows)) => println!("Successfully added {} row(s)", rows),
-        Ok(lexer::LexerOk::Read(tasks)) => {
-            for task in tasks {
-                println!("{}", task);
-            }
-        }
-        Ok(lexer::LexerOk::Update(result)) => println!("Task finished: {}", result),
-        Ok(lexer::LexerOk::Delete(result)) => println!("Task deleted: {}", result),
-        Err(err) => println!("{}", err),
-    }
-}
-
-fn init_db() -> Result<Connection, Error> {
-    let connection = Connection::open("tasks.db")?;
-    connection.execute(
-        "CREATE TABLE IF NOT EXISTS tasks (
-            uuid TEXT, 
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            title TEXT NOT NULL,
-            status BOOLEAN DEFAULT FALSE
-            )",
-        (),
-    )?;
-
-    // Trigger might have to be implemented later:
-    // connection.execute(
-    //     "CREATE TRIGGER IF NOT EXISTS increment_id 
-    //     AFTER INSERT
-    //     ON tasks
-    //     FOR EACH ROW
-    //     BEGIN
-    //         UPDATE tasks SET id = id + 1;
-    //     END;",
-    //     [],
-    // )?;
-    Ok(connection)
+    // Parse CLI arguments
+    lexer::lexer_handler(&conn);
 }

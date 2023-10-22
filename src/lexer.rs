@@ -1,21 +1,12 @@
-use std::fmt::format;
-
 use clap::{Parser, Subcommand};
 use rusqlite::Connection;
 use thiserror::Error;
 
-use crate::crud::{create_task, read_task, update_task, delete_task, CrudError, Task};
-
-pub enum LexerOk {
-    Create(usize),
-    Read(Vec<Task>),
-    Update(String),
-    Delete(String),
-}
+use crate::crud::*;
 
 #[derive(Debug, Error)]
 pub enum LexerError {
-    #[error("Invalid Command:\n\n {0}")]
+    #[error("\x1b[31mInvalid Command:\n\x1b[0m{0}")]
     InputError(String),
     #[error(transparent)]
     CrudError(#[from] CrudError),
@@ -36,45 +27,70 @@ enum Commands {
     Delete { delete_args: String },
 }
 
-pub fn lexer(conn: &Connection) -> Result<LexerOk, LexerError> {
+pub fn lexer_handler(conn: &Connection) {
+    match parse_cli(conn) {
+        Ok(success) => println!("{}", success),
+        Err(err) => eprintln!("{}", err),
+    };
+}
+
+fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
     let args = Cli::parse();
 
     match args.command {
         Commands::Add { create_args } => {
             let title = create_args.join(" ");
             if title.len() == 0 {
-                return Err(LexerError::InputError("Please give a title".to_string()));
+                return Err(LexerError::InputError(
+                    "Task name missing, please enter a name".to_string(),
+                ));
             } else {
-                Ok(LexerOk::Create(create_task(conn, title)?))
+                Ok(create_task(conn, title)?)
             }
         }
+
         Commands::Show { read_args } => {
             let mut task_id = None;
-
             if let Some(read_args) = read_args {
                 if let Ok(valid_number) = read_args.parse() {
                     task_id = Some(valid_number);
                 }
             }
-            Ok(LexerOk::Read(read_task(conn, task_id)?))
+            read_task(conn, task_id)?;
+            return Ok("".to_string());
         }
+
         Commands::Finish { update_args } => {
-            let task_id = update_args
-                .parse()
-                .map_err(|_| {
-                    LexerError::InputError(format(format_args!("Not a number: {}", update_args)))
-                })?;
-
-            Ok(LexerOk::Update(update_task(&conn, task_id)?))
+            if let Some(task_id) = parse_number(update_args) {
+                return Ok(update_task(&conn, task_id)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task Id, please enter a number".to_string(),
+                ));
+            }
         }
-        Commands::Delete { delete_args } => {
-            let task_id = delete_args
-                .parse()
-                .map_err(|_| {
-                    LexerError::InputError(format(format_args!("Not a number: {}", delete_args)))
-                })?;
 
-            Ok(LexerOk::Delete(delete_task(&conn, task_id)?))
+        Commands::Delete { delete_args } => {
+            if let Some(task_id) = parse_number(delete_args) {
+                return Ok(delete_task(&conn, task_id)?);
+            }
+            else {
+
+            
+            return Err(LexerError::InputError(
+                "No Task Id, please enter a number".to_string(),
+            ));
+            }
+        }
+    }
+}
+
+fn parse_number(num_string: String) -> Option<i64> {
+    match num_string.parse::<i64>() {
+        Ok(parsed_num) => Some(parsed_num),
+        Err(err) => {
+            eprintln!("Parsing failed: {}", err);
+            None
         }
     }
 }

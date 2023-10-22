@@ -26,6 +26,7 @@ impl fmt::Display for Task {
         } else {
             ""
         };
+
         // NerdFont Signs for Future reference:
         // --------------------------------------------------------------------
         // Finished: 󰱒 (nf-md-checkbox_outline)
@@ -34,34 +35,38 @@ impl fmt::Display for Task {
         // New:      󰿦 (nf-md-texture_box)        󰆢 (nf-md-crop_square)
         // Project:   (nf-oct-project_roadmap)
         // --------------------------------------------------------------------
+
         let title = format!("\x1b[1;34m{}\x1b[0m", self.title);
-        write!(f, "({})  {} {}", self.id, status, title)
+        write!(f, "{}  {} ({})", status, title, self.id)
     }
 }
 
-pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError> {
+// CRUD methods (Create, Read, Update, Delete) -----------------------------------------------------
+pub fn create_task(conn: &Connection, title: String) -> Result<String, CrudError> {
     let task = Task {
         id: 0,
         uuid: Uuid::new_v4().to_string(),
         title,
         status: false,
     };
-    let result = conn.execute(
+    conn.execute(
         "INSERT INTO tasks (uuid, title, status) VALUES (?1, ?2, ?3)",
         (task.uuid, task.title.clone(), task.status),
     )?;
-    Ok(result)
+    Ok(format!("Added new task:\n\x1b[1;34m{}\x1b[0m", task.title))
 }
 
-pub fn read_task(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudError> {
+pub fn read_task(conn: &Connection, task_id: Option<i64>) -> Result<String, CrudError> {
     if let Some(task_id) = task_id {
         let task = get_task(conn, task_id)?;
         let mut task_vec = Vec::new();
         task_vec.push(task);
-        return Ok(task_vec);
+        print_tasks(task_vec);
+        return Ok("All good".to_string());
     } else {
         let task_vec = get_all_tasks(conn)?;
-        return Ok(task_vec);
+        print_tasks(task_vec);
+        return Ok("All good".to_string());
     }
 }
 
@@ -69,7 +74,7 @@ pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
     match get_task(conn, task_id) {
         Ok(task) => {
             conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
-            Ok(format!("\x1b[1;34m{}\x1b[0m (Id: {})", task.title, task.id))
+            Ok(format!("Finished:\n\x1b[1;34m{}\x1b[0m ({})", task.title, task.id))
         }
         Err(err) => Err(err),
     }
@@ -79,9 +84,16 @@ pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
     match get_task(conn, task_id) {
         Ok(task) => {
             conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
-            Ok(format!("\x1b[1;34m{}\x1b[0m (ID: {})", task.title, task.id))
+            Ok(format!("Deleted:\n\x1b[1;34m{}\x1b[0m ({})", task.title, task.id))
         }
         Err(err) => Err(err),
+    }
+}
+
+// Helper functions ________________________________________________________________________________
+fn print_tasks(tasks: Vec<Task>) {
+    for task in tasks {
+        println!("{}", task);
     }
 }
 
