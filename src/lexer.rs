@@ -22,7 +22,7 @@ enum Commands {
     Delete { delete_args: String },
 }
 
-// Public Crud interface ____________________________________________________________________________
+// Public Lexer interface __________________________________________________________________________
 pub fn lexer_handler(conn: &Connection) {
     match parse_cli(conn) {
         Ok(success) => println!("{}", success),
@@ -30,7 +30,7 @@ pub fn lexer_handler(conn: &Connection) {
     };
 }
 
-// Private Crud functions ___________________________________________________________________________
+// Private parser functions ________________________________________________________________________
 fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
     let args = Cli::parse();
 

@@ -2,8 +2,9 @@
 
 // MVP version 0.1.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Add comments
 // [ ] Create Readme
+// [ ] Test
+// [x] Add comments
 // [x] Dry up Code
 // [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()
 // [x] Id numbers are unwieldy (uuid)
@@ -17,6 +18,7 @@
 // -------------------------------------------------------------------------------------------------
 // [ ] Id numbers get renumbered on delete (Implement SQL Trigger)
 // [ ] Confirmation of deletion
+// [ ] Improve Error enums (consolidate them)
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
 // -------------------------------------------------------------------------------------------------
 

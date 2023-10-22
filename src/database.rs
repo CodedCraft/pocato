@@ -2,6 +2,7 @@
 
 use rusqlite::Connection;
 
+// Initialize database _____________________________________________________________________________
 pub fn init_db() -> Connection {
     match Connection::open("tasks.db") {
         Ok(conn) => {
@@ -12,6 +13,7 @@ pub fn init_db() -> Connection {
     }
 }
 
+// Create table ___________________________________________________________________________________""
 fn create_table(conn: &Connection) {
     let result = conn.execute(
         "CREATE TABLE IF NOT EXISTS tasks (
