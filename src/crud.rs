@@ -35,7 +35,7 @@ impl fmt::Display for Task {
         // Project:   (nf-oct-project_roadmap)
         // --------------------------------------------------------------------
         let title = format!("\x1b[1;34m{}\x1b[0m", self.title);
-        write!(f, "({})  {} {}",self.id, status, title)
+        write!(f, "({})  {} {}", self.id, status, title)
     }
 }
 
@@ -53,14 +53,61 @@ pub fn create_task(conn: &Connection, title: String) -> Result<usize, CrudError>
     Ok(result)
 }
 
-pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudError> {
-    // let mut query = "SELECT * FROM tasks WHERE status=false".to_string();
-    let mut query = "SELECT * FROM tasks".to_string();
-
-    if let Some(id) = id {
-        query.push_str(&format!(" AND id={}", id))
+pub fn read_task(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudError> {
+    if let Some(task_id) = task_id {
+        let task = get_task(conn, task_id)?;
+        let mut task_vec = Vec::new();
+        task_vec.push(task);
+        return Ok(task_vec);
+    } else {
+        let task_vec = get_all_tasks(conn)?;
+        return Ok(task_vec);
     }
+}
 
+pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
+    match get_task(conn, task_id) {
+        Ok(task) => {
+            conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
+            Ok(format!("\x1b[1;34m{}\x1b[0m (Id: {})", task.title, task.id))
+        }
+        Err(err) => Err(err),
+    }
+}
+
+pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
+    match get_task(conn, task_id) {
+        Ok(task) => {
+            conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
+            Ok(format!("\x1b[1;34m{}\x1b[0m (ID: {})", task.title, task.id))
+        }
+        Err(err) => Err(err),
+    }
+}
+
+fn get_task(conn: &Connection, task_id: i64) -> Result<Task, CrudError> {
+    let query = format!("SELECT * FROM tasks WHERE id = {}", task_id);
+    let mut stmt = conn.prepare(&query)?;
+    let task = stmt.query_row((), |row| {
+        Ok(Task {
+            uuid: row.get(0)?,
+            id: row.get(1)?,
+            title: row.get(2)?,
+            status: row.get(3)?,
+        })
+    });
+
+    match task {
+        Ok(task) => Ok(task),
+        Err(rusqlite::Error::QueryReturnedNoRows) => {
+            Err(CrudError::TaskNotFound("No such Task".to_string()))
+        }
+        Err(err) => Err(CrudError::RusqliteError(err)),
+    }
+}
+
+fn get_all_tasks(conn: &Connection) -> Result<Vec<Task>, CrudError> {
+    let query = "SELECT * FROM tasks".to_string();
     let mut stmt = conn.prepare(&query)?;
     let tasks = stmt.query_map((), |row| {
         Ok(Task {
@@ -71,55 +118,10 @@ pub fn read_task(conn: &Connection, id: Option<i64>) -> Result<Vec<Task>, CrudEr
         })
     })?;
 
-    let mut task_array = Vec::new();
+    let mut task_vec = Vec::new();
 
     for task in tasks {
-        task_array.push(task?);
+        task_vec.push(task?);
     }
-
-    match task_array.len() {
-        0 => return Err(CrudError::TaskNotFound("No such Task".to_string())),
-        _ => return Ok(task_array),
-    }
-}
-
-pub fn update_task(conn: &Connection, task_id: i64) -> Result<Task, CrudError> {
-    let query = format!("SELECT * FROM tasks WHERE id = {}", task_id);
-    let mut stmt = conn.prepare(&query)?;
-    let mut task_to_delete = stmt.query_map((), |row| {
-        Ok(Task {
-            uuid: row.get(0)?,
-            id: row.get(1)?,
-            title: row.get(2)?,
-            status: row.get(3)?,
-        })
-    })?;
-
-    if let Some(task) = task_to_delete.next() {
-        conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
-        return Ok(task?);
-    } else {
-        return Err(CrudError::TaskNotFound("No such Task".to_string()));
-    }
-}
-
-pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
-    // Check if the task exists
-    let task_exists = conn.query_row("SELECT 1 FROM tasks WHERE id = ?", [task_id], |_row| Ok(()));
-
-    match task_exists {
-        Ok(_) => {
-            // Task exists, proceed to delete
-            conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
-            Ok(format!("Task deleted {}", task_id))
-        }
-        Err(rusqlite::Error::QueryReturnedNoRows) => {
-            // Task doesn't exist
-            Err(CrudError::TaskNotFound("No such Task".to_string()))
-        }
-        Err(err) => {
-            // Handle other errors
-            Err(CrudError::RusqliteError(err))
-        }
-    }
+    Ok(task_vec)
 }

@@ -9,7 +9,7 @@ use crate::crud::{create_task, read_task, update_task, delete_task, CrudError, T
 pub enum LexerOk {
     Create(usize),
     Read(Vec<Task>),
-    Update(Task),
+    Update(String),
     Delete(String),
 }
 

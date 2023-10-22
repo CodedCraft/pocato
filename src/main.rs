@@ -1,21 +1,28 @@
-// #![allow(unused)]
+// MVP version 0.1.0:
+// -------------------------------------------------------------------------------------------------
+// [ ] Code is not dry
+// [ ] Add comments to functions or maybenot
+// [ ] Create Readme
+// [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()
+// [x] Id numbers are unwieldy (uuid)
+// [x] Displaying tasks in a nice way
+// [x] Change the read_task method so it only shows tasks that are not finished
+// [x] Finishing a task doesn't confirm the task name
+// [x] Code is (especially the CLI command handling) not yet separated out
+// -------------------------------------------------------------------------------------------------
+
+// Version 0.2.0:
+// -------------------------------------------------------------------------------------------------
+// [ ] Id numbers get renumbered on delete
+// [ ] Confirmation of deletion
+// [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
+// -------------------------------------------------------------------------------------------------
+
 use rusqlite::{Connection, Error, Result};
 
 mod crud;
 mod lexer;
 use lexer::lexer;
-
-// Todo:
-// -------------------------------------------------------------------------------------------------
-// [ ] Make a function that checks if an task id is present                                        |
-// [ ] Code is not dry                                                                             |
-// [ ] Add comments to functions or maybenot                                                       |
-// [x] Id numbers are unwieldy (uuid)                                                              |
-// [x] Displaying tasks in a nice way                                                              |
-// [x] Change the read_task method so it only shows tasks that are not finished                    |
-// [x] Finishing a task doesn't confirm the task name                                              |
-// [x] Code is (especially the CLI command handling) not yet separated out                         |
-// -------------------------------------------------------------------------------------------------
 
 fn main() {
     // Initialize SQLite Database ------------------------------------------------------------------
@@ -40,7 +47,7 @@ fn main() {
             }
         }
         Ok(lexer::LexerOk::Update(result)) => println!("Task finished: {}", result),
-        Ok(lexer::LexerOk::Delete(result)) => println!("{}", result),
+        Ok(lexer::LexerOk::Delete(result)) => println!("Task deleted: {}", result),
         Err(err) => println!("{}", err),
     }
 }
