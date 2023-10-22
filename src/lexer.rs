@@ -1,18 +1,13 @@
+// lexer.rs
+
 use clap::{Parser, Subcommand};
 use rusqlite::Connection;
-use thiserror::Error;
 
+use crate::error::LexerError;
 use crate::crud::*;
 
-#[derive(Debug, Error)]
-pub enum LexerError {
-    #[error("\x1b[31mInvalid Command:\n\x1b[0m{0}")]
-    InputError(String),
-    #[error(transparent)]
-    CrudError(#[from] CrudError),
-}
-
-#[derive(Debug, Parser)] // requires `derive` feature
+// Clap Setup ______________________________________________________________________________________
+#[derive(Debug, Parser)]
 #[command(name = "cargo")]
 struct Cli {
     #[command(subcommand)]
@@ -27,6 +22,7 @@ enum Commands {
     Delete { delete_args: String },
 }
 
+// Public Crud interface ____________________________________________________________________________
 pub fn lexer_handler(conn: &Connection) {
     match parse_cli(conn) {
         Ok(success) => println!("{}", success),
@@ -34,30 +30,23 @@ pub fn lexer_handler(conn: &Connection) {
     };
 }
 
+// Private Crud functions ___________________________________________________________________________
 fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
     let args = Cli::parse();
 
     match args.command {
         Commands::Add { create_args } => {
             let title = create_args.join(" ");
-            if title.len() == 0 {
-                return Err(LexerError::InputError(
-                    "Task name missing, please enter a name".to_string(),
-                ));
+            if title.is_empty() {
+                return Err(LexerError::InputError("Task name missing, please enter a name".to_string()));
             } else {
                 Ok(create_task(conn, title)?)
             }
         }
 
         Commands::Show { read_args } => {
-            let mut task_id = None;
-            if let Some(read_args) = read_args {
-                if let Ok(valid_number) = read_args.parse() {
-                    task_id = Some(valid_number);
-                }
-            }
-            read_task(conn, task_id)?;
-            return Ok("".to_string());
+            let task_id = read_args.and_then(|string_id| parse_number(string_id));
+            Ok(read_task(conn, task_id)?)
         }
 
         Commands::Finish { update_args } => {

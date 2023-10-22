@@ -1,8 +1,10 @@
+//main.rs
+
 // MVP version 0.1.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Code is not dry
 // [ ] Add comments
 // [ ] Create Readme
+// [x] Dry up Code
 // [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()
 // [x] Id numbers are unwieldy (uuid)
 // [x] Displaying tasks in a nice way
@@ -21,11 +23,12 @@
 mod crud;
 mod lexer;
 mod database;
+mod error;
 
 fn main() {
     // Establish SQLite Database connection
     let conn = database::init_db();
 
-    // Parse CLI arguments
+    // Parse CLI arguments & call CRUD methods
     lexer::lexer_handler(&conn);
 }

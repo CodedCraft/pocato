@@ -1,3 +1,5 @@
+// database.rs
+
 use rusqlite::Connection;
 
 pub fn init_db() -> Connection {
