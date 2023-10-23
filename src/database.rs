@@ -4,7 +4,7 @@ use rusqlite::Connection;
 
 // Initialize database _____________________________________________________________________________
 pub fn init_db() -> Connection {
-    match Connection::open("tasks.db") {
+    match Connection::open("data/tasks.db") {
         Ok(conn) => {
             create_table(&conn);
             conn

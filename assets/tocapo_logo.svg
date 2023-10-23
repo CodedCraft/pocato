@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="tocapo_logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#cccccc"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.75904546"
+     inkscape:cx="141.62525"
+     inkscape:cy="603.38942"
+     inkscape:window-width="2536"
+     inkscape:window-height="1372"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="121.89787"
+       y="709.74999"
+       width="379.64904"
+       height="123.71371"
+       id="rect2" />
+    <rect
+       x="121.89787"
+       y="709.74999"
+       width="379.64904"
+       height="123.71371"
+       id="rect3" />
+    <rect
+       x="121.89787"
+       y="709.74999"
+       width="379.64904"
+       height="123.71371"
+       id="rect4" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:#456476;fill-opacity:1;stroke-width:4.71696"
+       id="path1"
+       cx="105"
+       cy="64.881531"
+       rx="68.153076"
+       ry="41.482471"
+       inkscape:export-filename="tocapo_logo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       transform="matrix(6.2441429,0,0,7.0384124,-711.65424,-5029.5408)"
+       id="text2"
+       style="font-size:18.6667px;font-family:Pacifico;-inkscape-font-specification:'Pacifico, Normal';word-spacing:0px;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#ffffff;stroke-width:10.1"><tspan
+         x="121.89844"
+         y="725.93454"
+         id="tspan3"><tspan
+           style="font-size:6.26855px"
+           id="tspan1">Tocapo</tspan></tspan></text>
+    <g
+       id="g4"
+       transform="translate(0,114.3853)" />
+  </g>
+</svg>
