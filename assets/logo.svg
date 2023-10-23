@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.75904546"
-     inkscape:cx="141.62525"
-     inkscape:cy="603.38942"
+     inkscape:zoom="0.53672619"
+     inkscape:cx="108.99412"
+     inkscape:cy="-78.25219"
      inkscape:window-width="2536"
      inkscape:window-height="1372"
      inkscape:window-x="0"
@@ -52,6 +52,12 @@
        width="379.64904"
        height="123.71371"
        id="rect4" />
+    <rect
+       x="121.89787"
+       y="709.74999"
+       width="379.64904"
+       height="123.71371"
+       id="rect1" />
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -69,16 +75,35 @@
        inkscape:export-ydpi="96" />
     <text
        xml:space="preserve"
-       transform="matrix(6.2441429,0,0,7.0384124,-711.65424,-5029.5408)"
+       transform="matrix(2.1946775,0,0,2.4738455,-221.01552,-1715.4027)"
        id="text2"
-       style="font-size:18.6667px;font-family:Pacifico;-inkscape-font-specification:'Pacifico, Normal';word-spacing:0px;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#ffffff;stroke-width:10.1"><tspan
+       style="font-size:18.6667px;font-family:Pacifico;-inkscape-font-specification:'Pacifico, Normal';word-spacing:0px;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#ffffff;stroke-width:10.1"
+       inkscape:export-filename="pocato_logo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          x="121.89844"
          y="725.93454"
-         id="tspan3"><tspan
-           style="font-size:6.26855px"
-           id="tspan1">Tocapo</tspan></tspan></text>
+         id="tspan2">Pocato</tspan></text>
     <g
        id="g4"
        transform="translate(0,114.3853)" />
+    <ellipse
+       style="fill:#456476;fill-opacity:1;stroke-width:4.71696"
+       id="ellipse1"
+       cx="105"
+       cy="169.48775"
+       rx="68.153076"
+       ry="41.482471"
+       inkscape:export-filename="tocapo_logo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       transform="matrix(2.1946775,0,0,2.4738455,-222.07386,-1610.7965)"
+       id="text1"
+       style="font-size:18.6667px;font-family:Pacifico;-inkscape-font-specification:'Pacifico, Normal';word-spacing:0px;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#ffffff;stroke-width:10.1"><tspan
+         x="121.89844"
+         y="725.93454"
+         id="tspan3">Topoca</tspan></text>
   </g>
 </svg>

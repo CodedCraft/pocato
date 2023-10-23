@@ -2,8 +2,8 @@
 
 // MVP version 0.1.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Create Readme
 // [ ] Test
+// [x] Create Readme
 // [x] Add comments
 // [x] Dry up Code
 // [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()

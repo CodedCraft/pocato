@@ -1,8 +1,9 @@
 # Tocapo - Your CLI Task Manager
 
+
 <!-- Logo ----------------------------------------------------------------------------------------->
 <p align="center">
-  <img src="assets/tocapo_logo.png" alt="Tocapo Logo" width="250" />
+  <img src="assets/pocato-logo.png" alt="Tocapo Logo" width="250" />
 </p>
 <!-- Logo ----------------------------------------------------------------------------------------->
 
@@ -56,7 +57,6 @@ Here are all commands to get you started:
 - `delete <Enter task ID>`: Delete a specific task.
 
 ## Feedback
-
 I value your feedback! If you encounter any issues, have suggestions, or want to report a bug, 
 please feel free to create an issue in the GitHub repository.
 
