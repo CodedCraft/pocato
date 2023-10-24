@@ -3,7 +3,7 @@
 
 <!-- Logo ----------------------------------------------------------------------------------------->
 <p align="center">
-  <img src="assets/pocato-logo.png" alt="Tocapo Logo" width="250" />
+  <img src="assets/pocato_logo.png" alt="Tocapo Logo" width="250" />
 </p>
 <!-- Logo ----------------------------------------------------------------------------------------->
 

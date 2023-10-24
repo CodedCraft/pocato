@@ -3,6 +3,7 @@
 // MVP version 0.1.0:
 // -------------------------------------------------------------------------------------------------
 // [ ] Test
+// [x] Move database location to XDG Base Directory Specification compliant location
 // [x] Create Readme
 // [x] Add comments
 // [x] Dry up Code
@@ -19,6 +20,8 @@
 // [ ] Id numbers get renumbered on delete (Implement SQL Trigger)
 // [ ] Confirmation of deletion
 // [ ] Improve Error enums (consolidate them)
+// [ ] Display Task nicer and more consistently
+// [ ] Make the application more modular in preparation for the web app & gui
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
 // -------------------------------------------------------------------------------------------------
 
