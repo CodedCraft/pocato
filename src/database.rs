@@ -10,14 +10,12 @@ fn database_dir() -> PathBuf {
     let database_dir = match env::consts::OS {
         "linux" | "macos" => match dirs::data_dir() {
             Some(xdg_data_home) => xdg_data_home.join("pocato/"),
-            None => panic!("Can't access the ~/.local/share/ folder")
+            None => panic!("Can't access the ~/.local/share/ folder"),
         },
-        "windows" => {
-            match dirs::data_local_dir() {
-                Some(appdata) => appdata.join("pocato/"),
-                None => panic!("Can't find the AppData directory.")
-            }
-        }, 
+        "windows" => match dirs::data_local_dir() {
+            Some(appdata) => appdata.join("pocato/"),
+            None => panic!("Can't find the AppData directory."),
+        },
         _ => panic!("Unsupported platform"),
     };
 
@@ -46,8 +44,8 @@ pub fn init_db() -> Connection {
 fn create_table(conn: &Connection) {
     let result = conn.execute(
         "CREATE TABLE IF NOT EXISTS tasks (
-            uuid TEXT, 
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            uuid TEXT PRIMARY KEY, 
+            id INTEGER, 
             title TEXT NOT NULL,
             status BOOLEAN DEFAULT FALSE
             )",
@@ -57,16 +55,4 @@ fn create_table(conn: &Connection) {
         Ok(_) => (),
         Err(err) => panic!("Could not create Table {}", err),
     }
-
-    // Trigger be implemented in 0.2.0:
-    // connection.execute(
-    //     "CREATE TRIGGER IF NOT EXISTS increment_id
-    //     AFTER INSERT
-    //     ON tasks
-    //     FOR EACH ROW
-    //     BEGIN
-    //         UPDATE tasks SET id = id + 1;
-    //     END;",
-    //     [],
-    // )?;
 }

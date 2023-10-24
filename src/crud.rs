@@ -39,21 +39,26 @@ impl fmt::Display for Task {
 
 // CRUD methods (Create, Read, Update, Delete) -----------------------------------------------------
 pub fn create_task(conn: &Connection, title: String) -> Result<String, CrudError> {
+    let next_id: i64 = conn.query_row("SELECT COALESCE(MAX(id), 0) + 1 FROM tasks", [], |row| {
+        row.get(0)
+    })?;
+
     let task = Task {
-        id: 0,
+        id: next_id,
         uuid: Uuid::new_v4().to_string(),
         title,
         status: false,
     };
+
     conn.execute(
-        "INSERT INTO tasks (uuid, title, status) VALUES (?1, ?2, ?3)",
-        (task.uuid, task.title.clone(), task.status),
+        "INSERT INTO tasks (uuid, id, title, status) VALUES (?1, ?2, ?3, ?4)",
+        (task.uuid, task.id, task.title.clone(), task.status),
     )?;
     Ok(format!("Added new task:\n\x1b[1;34m{}\x1b[0m", task.title))
 }
 
 pub fn read_task(conn: &Connection, task_id: Option<i64>) -> Result<String, CrudError> {
-    let task_vec= get_tasks(conn, task_id)?;
+    let task_vec = get_tasks(conn, task_id)?;
     let task_list = build_task_list(task_vec);
     Ok(task_list)
 }
@@ -70,6 +75,11 @@ pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
 pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
     let task = &get_tasks(conn, Some(task_id))?[0];
     conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
+    // Renumber id numbers to close gaps created by a deletion
+    conn.execute(
+        "UPDATE tasks SET id = (SELECT COUNT(*) FROM tasks t WHERE t.id < tasks.id) + 1",
+        [],
+    )?;
     Ok(format!(
         "Deleted:\n\x1b[1;34m{}\x1b[0m ({})",
         task.title, task.id
@@ -106,7 +116,7 @@ fn get_tasks(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudE
     for task in tasks {
         task_vec.push(task?);
     }
-    
+
     if task_vec.is_empty() {
         return Err(CrudError::TaskNotFound("No tasks found".to_string()));
     }

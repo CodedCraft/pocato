@@ -1,4 +1,4 @@
-# Tocapo - Your CLI Task Manager
+# Pocato - Your CLI Task Manager
 
 
 <!-- Logo ----------------------------------------------------------------------------------------->

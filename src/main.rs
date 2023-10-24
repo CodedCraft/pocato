@@ -1,29 +1,23 @@
 //main.rs
 
-// MVP version 0.1.0:
-// -------------------------------------------------------------------------------------------------
-// [ ] Test
-// [x] Move database location to XDG Base Directory Specification compliant location
-// [x] Create Readme
-// [x] Add comments
-// [x] Dry up Code
-// [x] Make a function that checks if an task id is present => get_task() / get_all_tasks()
-// [x] Id numbers are unwieldy (uuid)
-// [x] Displaying tasks in a nice way
-// [x] Change the read_task method so it only shows tasks that are not finished
-// [x] Finishing a task doesn't confirm the task name
-// [x] Code is (especially the CLI command handling) not yet separated out
-// -------------------------------------------------------------------------------------------------
-
 // Version 0.2.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Id numbers get renumbered on delete (Implement SQL Trigger)
 // [ ] Confirmation of deletion
 // [ ] Improve Error enums (consolidate them)
+// [ ] More consistent error messages
 // [ ] Display Task nicer and more consistently
 // [ ] Make the application more modular in preparation for the web app & gui
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
+// [ ] Add different task states
+// [ ] Pick Nerd Font icons for task status representation
+// [x] Id numbers get renumbered on delete
 // -------------------------------------------------------------------------------------------------
+
+// Version 0.3.0:
+// -------------------------------------------------------------------------------------------------
+// [ ] Axum Web App
+// -------------------------------------------------------------------------------------------------
+
 
 mod crud;
 mod lexer;
