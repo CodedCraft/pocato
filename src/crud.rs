@@ -1,5 +1,6 @@
 // crud.rs
 
+use dialoguer::Confirm;
 use rusqlite::Connection;
 use std::fmt;
 use uuid::Uuid;
@@ -74,16 +75,26 @@ pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
 
 pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
     let task = &get_tasks(conn, Some(task_id))?[0];
-    conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
-    // Renumber id numbers to close gaps created by a deletion
-    conn.execute(
-        "UPDATE tasks SET id = (SELECT COUNT(*) FROM tasks t WHERE t.id < tasks.id) + 1",
-        [],
+    let confirmation_message = format!("Delete task {} '{}'? (yes/no)", task.id, task.title);
+    match Confirm::new().with_prompt(confirmation_message).interact() {
+        Ok(x) => {
+            if x {
+                // Delete task:
+                conn.execute("DELETE FROM tasks WHERE id = ?", [task_id])?;
+                // Renumber id numbers to close gaps created by a deletion:
+                conn.execute(
+            "UPDATE tasks SET id = (SELECT COUNT(*) FROM tasks t WHERE t.id < tasks.id) + 1",
+            [],
     )?;
-    Ok(format!(
-        "Deleted:\n\x1b[1;34m{}\x1b[0m ({})",
-        task.title, task.id
-    ))
+                return Ok(format!(
+                    "Deleted:\n\x1b[1;34m{}\x1b[0m ({})",
+                    task.title, task.id
+                ));
+            }
+        }
+        Err(err) => eprintln!("{}", err),
+    }
+    Ok("Task not deleted".to_string())
 }
 
 // Helper functions ________________________________________________________________________________
@@ -118,7 +129,7 @@ fn get_tasks(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudE
     }
 
     if task_vec.is_empty() {
-        return Err(CrudError::TaskNotFound("No tasks found".to_string()));
+        return Err(CrudError::TaskNotFound("Task not found".to_string()));
     }
 
     Ok(task_vec)

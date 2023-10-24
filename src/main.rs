@@ -2,7 +2,6 @@
 
 // Version 0.2.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Confirmation of deletion
 // [ ] Improve Error enums (consolidate them)
 // [ ] More consistent error messages
 // [ ] Display Task nicer and more consistently
@@ -10,6 +9,7 @@
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
 // [ ] Add different task states
 // [ ] Pick Nerd Font icons for task status representation
+// [x] Confirmation of deletion
 // [x] Id numbers get renumbered on delete
 // -------------------------------------------------------------------------------------------------
 
