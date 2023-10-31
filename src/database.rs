@@ -46,8 +46,8 @@ fn create_table(conn: &Connection) {
         "CREATE TABLE IF NOT EXISTS tasks (
             uuid TEXT PRIMARY KEY, 
             id INTEGER, 
-            title TEXT NOT NULL,
-            status BOOLEAN DEFAULT FALSE
+            title TEXT NOT NULL UNIQUE,
+            state INTEGER
             )",
         (),
     );

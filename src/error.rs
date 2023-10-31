@@ -13,8 +13,8 @@ pub enum LexerError {
 
 #[derive(Debug, Error)]
 pub enum CrudError {
-    #[error("Rusqlite Error:\n {0}")]
+    #[error("\x1b[31mRusqlite Error:\n\x1b[0m{0}")]
     RusqliteError(#[from] Error),
-    #[error("Input Error:\n {0}")]
+    #[error("\x1b[31mInput Error:\n\x1b[0m{0}")]
     TaskNotFound(String),
 }

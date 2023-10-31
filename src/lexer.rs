@@ -18,6 +18,11 @@ struct Cli {
 enum Commands {
     Add { create_args: Vec<String> },
     Show { read_args: Option<String> },
+    Start { task_id: String },
+    Block { task_id: String },
+    Someday { task_id: String },
+    Cancel { task_id: String },
+    Pause { task_id: String },
     Finish { update_args: String },
     Delete { delete_args: String },
 }
@@ -38,7 +43,7 @@ fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
         Commands::Add { create_args } => {
             let title = create_args.join(" ");
             if title.is_empty() {
-                return Err(LexerError::InputError("Task name missing, please enter a name".to_string()));
+                return Err(LexerError::InputError("Task name missing, please enter a name.".to_string()));
             } else {
                 Ok(create_task(conn, title)?)
             }
@@ -49,12 +54,62 @@ fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
             Ok(read_task(conn, task_id)?)
         }
 
-        Commands::Finish { update_args } => {
-            if let Some(task_id) = parse_number(update_args) {
-                return Ok(update_task(&conn, task_id)?);
+        Commands::Start { task_id } => {
+            if let Some(task_id) = parse_number(task_id) {
+                return Ok(update_task(&conn, task_id, TaskState::Started)?);
             } else {
                 return Err(LexerError::InputError(
-                    "No Task Id, please enter a number".to_string(),
+                    "No Task ID, please enter a number".to_string(),
+                ));
+            }
+        }
+
+        Commands::Block { task_id } => {
+            if let Some(task_id) = parse_number(task_id) {
+                return Ok(update_task(&conn, task_id, TaskState::Blocked)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task ID, please enter a number".to_string(),
+                ));
+            }
+        }
+
+        Commands::Someday { task_id } => {
+            if let Some(task_id) = parse_number(task_id) {
+                return Ok(update_task(&conn, task_id, TaskState::Someday)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task ID, please enter a number".to_string(),
+                ));
+            }
+        }
+
+        Commands::Cancel { task_id } => {
+            if let Some(task_id) = parse_number(task_id) {
+                return Ok(update_task(&conn, task_id, TaskState::Cancelled)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task ID, please enter a number".to_string(),
+                ));
+            }
+        }
+
+        Commands::Pause { task_id } => {
+            if let Some(task_id) = parse_number(task_id) {
+                return Ok(update_task(&conn, task_id, TaskState::Paused)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task ID, please enter a number".to_string(),
+                ));
+            }
+        }
+
+        Commands::Finish { update_args } => {
+            if let Some(task_id) = parse_number(update_args) {
+                return Ok(update_task(&conn, task_id, TaskState::Finished)?);
+            } else {
+                return Err(LexerError::InputError(
+                    "No Task ID, please enter a number".to_string(),
                 ));
             }
         }
@@ -67,7 +122,7 @@ fn parse_cli(conn: &Connection) -> Result<String, LexerError> {
 
             
             return Err(LexerError::InputError(
-                "No Task Id, please enter a number".to_string(),
+                "No Task ID, please enter a number".to_string(),
             ));
             }
         }

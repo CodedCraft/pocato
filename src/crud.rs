@@ -3,38 +3,105 @@
 use dialoguer::Confirm;
 use rusqlite::Connection;
 use std::fmt;
+use tabled::{
+    settings::{object::Columns, Disable, Style},
+    Table, Tabled,
+};
 use uuid::Uuid;
 
 use crate::error::CrudError;
 
-// Define Task _____________________________________________________________________________________
-#[derive(Debug, Clone)]
-pub struct Task {
-    pub uuid: String,
-    pub id: i64,
-    pub title: String,
-    pub status: bool,
+// Define and implement Task -----------------------------------------------------------------------
+#[derive(Debug, Clone, Tabled)]
+struct Task {
+    #[tabled(rename = "📝")]
+    state: TaskState,
+    #[tabled(rename = "\x1b[1;34mTask\x1b[0m")]
+    title: String,
+    #[tabled(rename = "\x1b[1;34mID\x1b[0m")]
+    id: i64,
+    uuid: String,
 }
 
-impl fmt::Display for Task {
+#[derive(Debug, Clone)]
+pub enum TaskState {
+    Pending,
+    Started,
+    Finished,
+    Blocked,
+    Someday,
+    Cancelled,
+    Paused,
+}
+
+// NerdFont Signs for Future reference:
+// --------------------------------------------------------------------
+// Finished: 󰱒 (nf-md-checkbox_outline)    (nf-oct-checkbox)
+// Deleted:  󰛌 (nf-md-delete_empty)       󰅘 (nf-md-close_box_outline)
+// Started:  󰛲 (nf-md-minus_box_outline)  󱗝 (nf-md-circle_box_outline)
+// New:      󰿦 (nf-md-texture_box)        󰆢 (nf-md-crop_square)
+// Project:   (nf-oct-project_roadmap)
+// --------------------------------------------------------------------
+
+impl fmt::Display for TaskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let status = if self.status {
-            "\x1b[32m\x1b[0m"
-        } else {
-            ""
+        // let icon = match self {
+        //     TaskState::Pending  => "\x1b[39m[ ]\x1b[0m",
+        //     TaskState::Started  => "\x1b[33m[|]\x1b[0m",
+        //     TaskState::Finished => "\x1b[32m[√]\x1b[0m",
+        //     TaskState::Blocked => "\x1b[32m[#]\x1b[0m", //nf-fa-check_square_o
+        //     TaskState::Someday => "\x1b[32m[~]\x1b[0m", //nf-fa-check_square_o
+        //     TaskState::Cancelled => "\x1b[32m[x]\x1b[0m", //nf-fa-check_square_o
+        //     TaskState::Pause => "\x1b[32m[-]\x1b[0m", //nf-fa-check_square_o
+        // };
+        let icon = match self {
+            TaskState::Pending => "\x1b[39m\x1b[0m",  //nf-fa-square_o
+            TaskState::Started => "\x1b[33m\x1b[0m",  //nf-fa-pencil_square_o
+            TaskState::Finished => "\x1b[32m\x1b[0m", //nf-fa-check_square_o
+            TaskState::Blocked => "\x1b[34m\x1b[0m",
+            TaskState::Someday => "\x1b[32m\x1b[0m",
+            TaskState::Cancelled => "\x1b[31m\x1b[0m",
+            TaskState::Paused => "\x1b[32m\x1b[0m",
         };
+        write!(f, "{}", icon)
+    }
+}
 
-        // NerdFont Signs for Future reference:
-        // --------------------------------------------------------------------
-        // Finished: 󰱒 (nf-md-checkbox_outline)
-        // Deleted:  󰛌 (nf-md-delete_empty)       󰅘 (nf-md-close_box_outline)
-        // Started:  󰛲 (nf-md-minus_box_outline)  󱗝 (nf-md-circle_box_outline)
-        // New:      󰿦 (nf-md-texture_box)        󰆢 (nf-md-crop_square)
-        // Project:   (nf-oct-project_roadmap)
-        // --------------------------------------------------------------------
+impl TaskState {
+    fn to_string(&self) -> String {
+        match self {
+            TaskState::Pending => "Pending".to_string(),
+            TaskState::Started => "Started".to_string(),
+            TaskState::Finished => "Finished".to_string(),
+            TaskState::Blocked => "Blocked".to_string(),
+            TaskState::Someday => "Someday".to_string(),
+            TaskState::Cancelled => "Cancelled".to_string(),
+            TaskState::Paused => "Paused".to_string(),
+        }
+    }
 
-        let title = format!("\x1b[1;34m{}\x1b[0m", self.title);
-        write!(f, "{}  {} ({})", status, title, self.id)
+    fn to_state(text: String) -> TaskState {
+        match text.as_str() {
+            "Pending" => return TaskState::Pending,
+            "Started" => TaskState::Started,
+            "Finished" => TaskState::Finished,
+            "Blocked" => TaskState::Blocked,
+            "Someday" => TaskState::Someday,
+            "Cancelled" => TaskState::Cancelled,
+            "Paused" => TaskState::Paused,
+            _ => unreachable!("Task state does not exist"),
+        }
+    }
+    fn get_icon(&self) -> String {
+        match self {
+            TaskState::Pending => "\x1b[39m\x1b[0m".to_string(),
+            TaskState::Started => "\x1b[33m\x1b[0m".to_string(),
+            TaskState::Finished => "\x1b[32m\x1b[0m".to_string(),
+            TaskState::Blocked => "\x1b[34m\x1b[0m".to_string(),
+            TaskState::Someday => "\x1b[32m\x1b[0m".to_string(),
+            TaskState::Cancelled  => "\x1b[31m\x1b[0m".to_string(),
+            TaskState::Paused => "\x1b[32m\x1b[0m".to_string(),
+        }
     }
 }
 
@@ -48,28 +115,43 @@ pub fn create_task(conn: &Connection, title: String) -> Result<String, CrudError
         id: next_id,
         uuid: Uuid::new_v4().to_string(),
         title,
-        status: false,
+        state: TaskState::Pending,
     };
 
     conn.execute(
-        "INSERT INTO tasks (uuid, id, title, status) VALUES (?1, ?2, ?3, ?4)",
-        (task.uuid, task.id, task.title.clone(), task.status),
+        "INSERT INTO tasks (uuid, id, title, state) VALUES (?1, ?2, ?3, ?4)",
+        (
+            task.uuid,
+            task.id,
+            task.title.clone(),
+            task.state.to_string(),
+        ),
     )?;
-    Ok(format!("Added new task:\n\x1b[1;34m{}\x1b[0m", task.title))
+    Ok(format!(
+        "Added new task:\n  \x1b[1;34m{}\x1b[0m (#{})",
+        task.title, task.id
+    ))
 }
 
 pub fn read_task(conn: &Connection, task_id: Option<i64>) -> Result<String, CrudError> {
     let task_vec = get_tasks(conn, task_id)?;
-    let task_list = build_task_list(task_vec);
-    Ok(task_list)
+    let task_table = build_task_table(task_vec);
+    Ok(task_table)
 }
 
-pub fn update_task(conn: &Connection, task_id: i64) -> Result<String, CrudError> {
+pub fn update_task(
+    conn: &Connection,
+    task_id: i64,
+    task_state: TaskState,
+) -> Result<String, CrudError> {
     let task = &get_tasks(conn, Some(task_id))?[0];
-    conn.execute("UPDATE tasks SET status = true WHERE id = ?", [task_id])?;
+    conn.execute(
+        "UPDATE tasks SET state = ? WHERE id = ?",
+        (task_state.to_string(), task_id),
+    )?;
     Ok(format!(
-        "Finished:\n\x1b[1;34m{}\x1b[0m ({})",
-        task.title, task.id
+        "{}:\n{} \x1b[1;34m{}\x1b[0m (#{})",
+        task_state.to_string(), task_state.get_icon(), task.title, task.id
     ))
 }
 
@@ -87,7 +169,7 @@ pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
             [],
     )?;
                 return Ok(format!(
-                    "Deleted:\n\x1b[1;34m{}\x1b[0m ({})",
+                    "Deleted:\n\x1b[34m{}\x1b[0m ({})",
                     task.title, task.id
                 ));
             }
@@ -97,13 +179,16 @@ pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
     Ok("Task not deleted".to_string())
 }
 
-// Helper functions ________________________________________________________________________________
-fn build_task_list(tasks: Vec<Task>) -> String {
-    let mut task_list = String::new();
-    for task in tasks {
-        task_list.push_str(&format!("{}\n", task));
-    }
-    task_list
+// Helper functions --------------------------------------------------------------------------------
+
+fn build_task_table(tasks: Vec<Task>) -> String {
+    let style = Style::rounded();
+    let disable = Disable::column(
+        // Columns::new(3..4) // disable range
+        Columns::single(3), // disable single column
+    );
+    let table = Table::new(tasks).with(style).with(disable).to_string();
+    table
 }
 
 fn get_tasks(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudError> {
@@ -118,7 +203,7 @@ fn get_tasks(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudE
             uuid: row.get(0)?,
             id: row.get(1)?,
             title: row.get(2)?,
-            status: row.get(3)?,
+            state: TaskState::to_state(row.get(3)?),
         })
     })?;
 
