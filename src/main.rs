@@ -2,13 +2,12 @@
 
 // Version 0.2.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Organise modules
-// [ ] Separate out Tasks into its own module
-// [ ] Make the application more modular in preparation for the web app & gui
 // [ ] Refactor Task icons, states & lexer (not dry)
+// [ ] Make the application more modular in preparation for the web app & gui
 // [ ] Improve Error enums (consolidate them)
 // [ ] More consistent error messages
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
+// [x] Separate out Tasks into its own module
 // [x] Add "created, project & parent" fields to data base
 // [x] Pick Nerd Font icons for task status representation
 // [x] Add different task states
@@ -19,6 +18,7 @@
 
 // Version 0.3.0:
 // -------------------------------------------------------------------------------------------------
+// [ ] Custom Lexer & Parser
 // [ ] Implement Filter
 // [ ] Implement Projects workflow
 // [ ] Implement a planning workflow
@@ -26,11 +26,11 @@
 // [ ] EGUI
 // -------------------------------------------------------------------------------------------------
 
-
 mod crud;
 mod lexer;
 mod database;
 mod error;
+mod task;
 
 fn main() {
     // Establish SQLite Database connection

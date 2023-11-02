@@ -5,6 +5,7 @@ use rusqlite::Connection;
 
 use crate::error::LexerError;
 use crate::crud::*;
+use crate::task::*;
 
 // Clap Setup ______________________________________________________________________________________
 #[derive(Debug, Parser)]

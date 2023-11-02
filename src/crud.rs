@@ -1,131 +1,21 @@
 // crud.rs
 
-use chrono::prelude::*;
 use dialoguer::Confirm;
 use rusqlite::Connection;
-use std::fmt;
 use tabled::{
     settings::{object::Columns, Disable, Style},
-    Table, Tabled,
-};
-use uuid::Uuid;
+    Table,};
 
 use crate::error::CrudError;
-
-// Define and implement Task -----------------------------------------------------------------------
-#[derive(Debug, Clone, Tabled)]
-struct Task {
-    #[tabled(rename = "📝")]
-    state: TaskState,
-    #[tabled(rename = "\x1b[1;34mTask\x1b[0m")]
-    title: String,
-    #[tabled(rename = "\x1b[1;34mID\x1b[0m")]
-    id: i64,
-    uuid: String,
-    created: String,
-    project: bool,
-    parent: String,
-    // tags: Vec<String>,
-}
-
-#[derive(Debug, Clone)]
-pub enum TaskState {
-    Pending,
-    Started,
-    Finished,
-    Blocked,
-    Someday,
-    Cancelled,
-    Paused,
-}
-
-// NerdFont Signs for Future reference:
-// --------------------------------------------------------------------
-// Finished: 󰱒 (nf-md-checkbox_outline)    (nf-oct-checkbox)
-// Deleted:  󰛌 (nf-md-delete_empty)       󰅘 (nf-md-close_box_outline)
-// Started:  󰛲 (nf-md-minus_box_outline)  󱗝 (nf-md-circle_box_outline)
-// New:      󰿦 (nf-md-texture_box)        󰆢 (nf-md-crop_square)
-// Project:   (nf-oct-project_roadmap)
-// --------------------------------------------------------------------
-
-impl fmt::Display for TaskState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // let icon = match self {
-        //     TaskState::Pending  => "\x1b[39m[ ]\x1b[0m",
-        //     TaskState::Started  => "\x1b[33m[|]\x1b[0m",
-        //     TaskState::Finished => "\x1b[32m[√]\x1b[0m",
-        //     TaskState::Blocked => "\x1b[32m[#]\x1b[0m", //nf-fa-check_square_o
-        //     TaskState::Someday => "\x1b[32m[~]\x1b[0m", //nf-fa-check_square_o
-        //     TaskState::Cancelled => "\x1b[32m[x]\x1b[0m", //nf-fa-check_square_o
-        //     TaskState::Pause => "\x1b[32m[-]\x1b[0m", //nf-fa-check_square_o
-        // };
-        let icon = match self {
-            TaskState::Pending => "\x1b[39m\x1b[0m",  //nf-fa-square_o
-            TaskState::Started => "\x1b[33m\x1b[0m",  //nf-fa-pencil_square_o
-            TaskState::Finished => "\x1b[32m\x1b[0m", //nf-fa-check_square_o
-            TaskState::Blocked => "\x1b[34m\x1b[0m",
-            TaskState::Someday => "\x1b[32m\x1b[0m",
-            TaskState::Cancelled => "\x1b[31m\x1b[0m",
-            TaskState::Paused => "\x1b[32m\x1b[0m",
-        };
-        write!(f, "{}", icon)
-    }
-}
-
-impl TaskState {
-    fn to_string(&self) -> String {
-        match self {
-            TaskState::Pending => "Pending".to_string(),
-            TaskState::Started => "Started".to_string(),
-            TaskState::Finished => "Finished".to_string(),
-            TaskState::Blocked => "Blocked".to_string(),
-            TaskState::Someday => "Someday".to_string(),
-            TaskState::Cancelled => "Cancelled".to_string(),
-            TaskState::Paused => "Paused".to_string(),
-        }
-    }
-
-    fn to_state(text: String) -> TaskState {
-        match text.as_str() {
-            "Pending" => return TaskState::Pending,
-            "Started" => TaskState::Started,
-            "Finished" => TaskState::Finished,
-            "Blocked" => TaskState::Blocked,
-            "Someday" => TaskState::Someday,
-            "Cancelled" => TaskState::Cancelled,
-            "Paused" => TaskState::Paused,
-            _ => unreachable!("Task state does not exist"),
-        }
-    }
-    fn get_icon(&self) -> String {
-        match self {
-            TaskState::Pending => "\x1b[39m\x1b[0m".to_string(),
-            TaskState::Started => "\x1b[33m\x1b[0m".to_string(),
-            TaskState::Finished => "\x1b[32m\x1b[0m".to_string(),
-            TaskState::Blocked => "\x1b[34m\x1b[0m".to_string(),
-            TaskState::Someday => "\x1b[32m\x1b[0m".to_string(),
-            TaskState::Cancelled => "\x1b[31m\x1b[0m".to_string(),
-            TaskState::Paused => "\x1b[32m\x1b[0m".to_string(),
-        }
-    }
-}
+use crate::task::*;
 
 // CRUD methods (Create, Read, Update, Delete) -----------------------------------------------------
 pub fn create_task(conn: &Connection, title: String) -> Result<String, CrudError> {
-    let next_id: i64 = conn.query_row("SELECT COALESCE(MAX(id), 0) + 1 FROM tasks", [], |row| {
+    let id: i64 = conn.query_row("SELECT COALESCE(MAX(id), 0) + 1 FROM tasks", [], |row| {
         row.get(0)
     })?;
 
-    let task = Task {
-        id: next_id,
-        uuid: Uuid::new_v4().to_string(),
-        title,
-        state: TaskState::Pending,
-        created: Utc::now().to_string(),
-        project: false,
-        parent: "".to_string(),
-        // tags: Vec::new(),
-    };
+    let task = Task::new(title.clone(), id);
 
     conn.execute(
         "INSERT INTO tasks
