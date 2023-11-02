@@ -54,7 +54,7 @@ pub fn update_task(
         (task_state.to_string(), task_id),
     )?;
     Ok(format!(
-        "{}:\n{} \x1b[1;34m{}\x1b[0m (#{})",
+        "{}:\n{}  \x1b[1;34m{}\x1b[0m (#{})",
         task_state.to_string(),
         task_state.get_icon(),
         task.title,

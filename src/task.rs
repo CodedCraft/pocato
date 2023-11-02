@@ -55,6 +55,18 @@ impl fmt::Display for TaskState {
 }
 
 impl TaskState {
+    pub fn to_string(&self) -> String {
+        match self {
+            TaskState::Pending => "Pending".to_string(),
+            TaskState::Started => "Started".to_string(),
+            TaskState::Finished => "Finished".to_string(),
+            TaskState::Blocked => "Blocked".to_string(),
+            TaskState::Someday => "Someday".to_string(),
+            TaskState::Cancelled => "Cancelled".to_string(),
+            TaskState::Paused => "Paused".to_string(),
+        }
+    }
+
     pub fn to_state(text: String) -> TaskState {
         match text.as_str() {
             "Pending" => return TaskState::Pending,

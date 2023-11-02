@@ -1,5 +1,6 @@
 // error.rs
 
+use std::num::ParseIntError;
 use thiserror::Error;
 use rusqlite::Error;
 
@@ -9,6 +10,9 @@ pub enum LexerError {
     InputError(String),
     #[error(transparent)]
     CrudError(#[from] CrudError),
+    #[error("\x1b[31mInvalid Command:\n\x1b[0mNot a valid number")]
+    ParseIntError(#[from] ParseIntError)
+
 }
 
 #[derive(Debug, Error)]
