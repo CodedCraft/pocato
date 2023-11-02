@@ -47,7 +47,10 @@ fn create_table(conn: &Connection) {
             uuid TEXT PRIMARY KEY, 
             id INTEGER, 
             title TEXT NOT NULL UNIQUE,
-            state INTEGER
+            state INTEGER,
+            created DATETIME,
+            project BOOL,
+            parent TEXT
             )",
         (),
     );

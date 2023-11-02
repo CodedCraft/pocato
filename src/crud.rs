@@ -1,5 +1,6 @@
 // crud.rs
 
+use chrono::prelude::*;
 use dialoguer::Confirm;
 use rusqlite::Connection;
 use std::fmt;
@@ -21,6 +22,10 @@ struct Task {
     #[tabled(rename = "\x1b[1;34mID\x1b[0m")]
     id: i64,
     uuid: String,
+    created: String,
+    project: bool,
+    parent: String,
+    // tags: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -99,7 +104,7 @@ impl TaskState {
             TaskState::Finished => "\x1b[32m\x1b[0m".to_string(),
             TaskState::Blocked => "\x1b[34m\x1b[0m".to_string(),
             TaskState::Someday => "\x1b[32m\x1b[0m".to_string(),
-            TaskState::Cancelled  => "\x1b[31m\x1b[0m".to_string(),
+            TaskState::Cancelled => "\x1b[31m\x1b[0m".to_string(),
             TaskState::Paused => "\x1b[32m\x1b[0m".to_string(),
         }
     }
@@ -116,15 +121,24 @@ pub fn create_task(conn: &Connection, title: String) -> Result<String, CrudError
         uuid: Uuid::new_v4().to_string(),
         title,
         state: TaskState::Pending,
+        created: Utc::now().to_string(),
+        project: false,
+        parent: "".to_string(),
+        // tags: Vec::new(),
     };
 
     conn.execute(
-        "INSERT INTO tasks (uuid, id, title, state) VALUES (?1, ?2, ?3, ?4)",
+        "INSERT INTO tasks
+        (uuid, id, title, state, created, project, parent)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
         (
             task.uuid,
             task.id,
             task.title.clone(),
             task.state.to_string(),
+            task.created,
+            task.project,
+            task.parent,
         ),
     )?;
     Ok(format!(
@@ -151,7 +165,10 @@ pub fn update_task(
     )?;
     Ok(format!(
         "{}:\n{} \x1b[1;34m{}\x1b[0m (#{})",
-        task_state.to_string(), task_state.get_icon(), task.title, task.id
+        task_state.to_string(),
+        task_state.get_icon(),
+        task.title,
+        task.id
     ))
 }
 
@@ -184,8 +201,8 @@ pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
 fn build_task_table(tasks: Vec<Task>) -> String {
     let style = Style::rounded();
     let disable = Disable::column(
-        // Columns::new(3..4) // disable range
-        Columns::single(3), // disable single column
+        Columns::new(3..), // disable range
+                             // Columns::single(3), // disable single column
     );
     let table = Table::new(tasks).with(style).with(disable).to_string();
     table
@@ -204,6 +221,9 @@ fn get_tasks(conn: &Connection, task_id: Option<i64>) -> Result<Vec<Task>, CrudE
             id: row.get(1)?,
             title: row.get(2)?,
             state: TaskState::to_state(row.get(3)?),
+            created: row.get(4)?,
+            project: row.get(5)?,
+            parent: row.get(6)?,
         })
     })?;
 

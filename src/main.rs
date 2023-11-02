@@ -2,13 +2,15 @@
 
 // Version 0.2.0:
 // -------------------------------------------------------------------------------------------------
-// [ ] Pick Nerd Font icons for task status representation
-// [ ] Add fields to data base
 // [ ] Organise modules
+// [ ] Separate out Tasks into its own module
+// [ ] Make the application more modular in preparation for the web app & gui
+// [ ] Refactor Task icons, states & lexer (not dry)
 // [ ] Improve Error enums (consolidate them)
 // [ ] More consistent error messages
-// [ ] Make the application more modular in preparation for the web app & gui
 // [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
+// [x] Add "created, project & parent" fields to data base
+// [x] Pick Nerd Font icons for task status representation
 // [x] Add different task states
 // [x] Display Tasks and messages nicer and more consistently
 // [x] Confirmation of deletion
@@ -17,6 +19,10 @@
 
 // Version 0.3.0:
 // -------------------------------------------------------------------------------------------------
+// [ ] Implement Filter
+// [ ] Implement Projects workflow
+// [ ] Implement a planning workflow
+// [ ] Add Tags Field
 // [ ] EGUI
 // -------------------------------------------------------------------------------------------------
 
