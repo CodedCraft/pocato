@@ -18,6 +18,7 @@
 
 // Version 0.3.0:
 // -------------------------------------------------------------------------------------------------
+// [ ] Check if Nerd font is available and set alternative icons if not
 // [ ] Custom Lexer & Parser
 // [ ] Implement Filter
 // [ ] Implement Projects workflow
