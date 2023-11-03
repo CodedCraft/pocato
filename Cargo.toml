@@ -1,11 +1,24 @@
 [package]
-name = "pct"
+name = "pocato"
 version = "0.1.0"
 edition = "2021"
 description = "Holistic Cli task manager and planner"
 license = "CC-BY-NC-ND-4.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# [features]
+# gui = []
+# cli = []
+
+[[bin]]
+name = "pocato"
+path = "src/gui.rs"
+# required-features = ["gui"]
+
+[[bin]]
+name = "pct"
+path = "src/cli.rs"
+# required-features = ["cli"]
+
 
 [dependencies]
 dirs = "5.0"
