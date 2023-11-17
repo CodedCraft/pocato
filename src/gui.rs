@@ -8,5 +8,8 @@ mod task;
 
 fn main() {
     // Establish SQLite Database connection
-    let _conn = database::init_db();
+    let conn = database::init_db();
+
+    // Parse CLI arguments & call CRUD methods
+    lexer::lexer_handler(&conn);
 }

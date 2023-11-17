@@ -41,7 +41,7 @@ pub fn init_db() -> Connection {
 }
 
 // Create table ___________________________________________________________________________________""
-fn create_table(conn: &Connection) {
+pub fn create_table(conn: &Connection) {
     let result = conn.execute(
         "CREATE TABLE IF NOT EXISTS tasks (
             uuid TEXT PRIMARY KEY, 

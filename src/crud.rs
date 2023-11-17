@@ -76,7 +76,7 @@ pub fn delete_task(conn: &Connection, task_id: i64) -> Result<String, CrudError>
             [],
     )?;
                 return Ok(format!(
-                    "Deleted:\n\x1b[34m{}\x1b[0m ({})",
+                    "Deleted:\n\x1b[34m{}\x1b[0m (#{})",
                     task.title, task.id
                 ));
             }
