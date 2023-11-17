@@ -1,6 +1,6 @@
 [package]
 name = "pocato"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Holistic Cli task manager and planner"
 license = "CC-BY-NC-ND-4.0"

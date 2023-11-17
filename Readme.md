@@ -22,39 +22,56 @@
 
 ## Introduction
 
-Welcome to Tocapo, a simple command-line interface tool designed to help you manage your tasks and 
-stay organized. The current release is a Minimum Viable Product (MVP) and consists of just the core 
-task manager application (todo app). The vision is to tightly integrate this task manager with the 
-Pomodoro Technique and a calendar, creating a comprehensive productivity ecosystem. There are big 
-plans for the future, including web and desktop applications, so stay tuned for exciting updates!
+Welcome to Pocato, a simple command-line interface tool designed to help you manage your tasks 
+and stay organized. The current release is a Minimum Viable Product (MVP) and consists of just the 
+core task manager application (todo app). The vision is to tightly integrate this task manager with 
+the Pomodoro Technique and a calendar, creating a comprehensive productivity ecosystem. There are 
+big plans for the future, including web and desktop applications, so stay tuned for exciting 
+updates!
 
 ## Features
 
 - **Task Creation:** Easily create tasks with a title.
 - **Task List:** View a list of all your tasks, including their status.
+- **Task Status:** Mark task as started (but not completed), blocked, cancelled or paused.
 - **Task Completion**: Mark task as complete.
 - **Task Deletion:** Remove tasks that are no longer needed.
 
-## Installation
+## Installation (Linux)
 
-To use Tocapo, you need to have rust cargo installed on your system. 
-1. Install with cargo:
+To use Pocato, you need to have rust and cargo installed on your system.
+(If not, I recommend install both with [rustup](https://rustup.rs/))
+1. Clone the repository and cd into the root of the project:
    ```bash
-   cargo install tocapo
-   ```
-2. Run tocapo with the 'help' command to learn all commands (or read [Usage](#Usage) section below):
+    git clone https://github.com/CodedCraft/pocato.git
+    cd pocato
+    ```
+2. Build with cargo:
+   ```bash
+   cargo build --bin "pct" --release```
+
+3. Move to compiled app into the bin folder:
+```bash
+    sudo mv target/release/pct /usr/bin/
+```
+3. Run tocapo with the 'help' command to learn all commands (or read [Usage](#Usage) section below):
     ```bash
-    tocapo help
+    pct help
     ```
 
 ## Usage
 Here are all commands to get you started:
 
-- `add <Enter task name>`: Create a new task.
-- `show`: Show all tasks the database.
-- `show <Enter task ID>`: Show a specific task.
-- `finish <Enter task ID>`: Check off a specific task.
-- `delete <Enter task ID>`: Delete a specific task.
+- `pct add <Enter task name>`:  Create a new task.
+- `pct show`:                   Show all tasks the database.
+- `pct show <Enter task ID>`:   Show a specific task.
+- `pct start <Enter task ID>`:  Start a specific task.
+- `pct block <Enter task ID>`:  Block a specific task.
+- `pct cancel <Enter task ID>`: Cancel a specific task.
+- `pct pause <Enter task ID>`:  Pause a specific task.
+- `pct finish <Enter task ID>`: Check off a specific task.
+- `pct delete <Enter task ID>`: Delete a specific task.
+- `pct help `:                  Show the help menu.
 
 ## Feedback
 I value your feedback! If you encounter any issues, have suggestions, or want to report a bug, 

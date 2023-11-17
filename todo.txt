@@ -1,19 +1,3 @@
-# Version 0.2.0:
-----------------------------------------------------------------------------------------------------
- [ ] Improve Error enums (consolidate them)
- [ ] More consistent error messages
- [ ] Add Tests for TDD/ CI (test driven development/ continuous intergration)
- [x] Make the application more modular in preparation for the web app & gui
- [x] Refactor Task icons, states & lexer (not dry)
- [x] Separate out Tasks into its own module
- [x] Add "created, project & parent" fields to data base
- [x] Pick Nerd Font icons for task status representation
- [x] Add different task states
- [x] Display Tasks and messages nicer and more consistently
- [x] Confirmation of deletion
- [x] Id numbers get renumbered on delete
- ---------------------------------------------------------------------------------------------------
-
 # Version 0.3.0:
 ----------------------------------------------------------------------------------------------------
  [ ] Check if Nerd font is available and set alternative icons if not
@@ -24,3 +8,20 @@
  [ ] Add Tags Field
  [ ] EGUI
 ----------------------------------------------------------------------------------------------------
+
+# Version 0.2.0:
+----------------------------------------------------------------------------------------------------
+ [x] Update Readme.md
+ [x] Add Tests for TDD/ CI (test driven development/ continuous intergration)
+ [x] Improve Error enums (consolidate them)
+ [x] More consistent error messages
+ [x] Make the application more modular in preparation for the web app & gui
+ [x] Refactor Task icons, states & lexer (not dry)
+ [x] Separate out Tasks into its own module
+ [x] Add "created, project & parent" fields to data base
+ [x] Pick Nerd Font icons for task status representation
+ [x] Add different task states
+ [x] Display Tasks and messages nicer and more consistently
+ [x] Confirmation of deletion
+ [x] Id numbers get renumbered on delete
+ ---------------------------------------------------------------------------------------------------
