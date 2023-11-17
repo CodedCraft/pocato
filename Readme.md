@@ -48,30 +48,32 @@ To use Pocato, you need to have rust and cargo installed on your system.
     ```
 2. Build with cargo:
    ```bash
-   cargo build --bin "pct" --release```
-
+   cargo build --bin "pct" --release
+    ```
 3. Move to compiled app into the bin folder:
-```bash
+    ```bash
     sudo mv target/release/pct /usr/bin/
-```
+    ```
 3. Run tocapo with the 'help' command to learn all commands (or read [Usage](#Usage) section below):
     ```bash
     pct help
     ```
-
 ## Usage
 Here are all commands to get you started:
 
-- `pct add <Enter task name>`:  Create a new task.
-- `pct show`:                   Show all tasks the database.
-- `pct show <Enter task ID>`:   Show a specific task.
-- `pct start <Enter task ID>`:  Start a specific task.
-- `pct block <Enter task ID>`:  Block a specific task.
-- `pct cancel <Enter task ID>`: Cancel a specific task.
-- `pct pause <Enter task ID>`:  Pause a specific task.
-- `pct finish <Enter task ID>`: Check off a specific task.
-- `pct delete <Enter task ID>`: Delete a specific task.
-- `pct help `:                  Show the help menu.
+ | Command + <argument>         | Description                  |
+ |------------------------------+------------------------------|
+ | `pct add <Enter task name>`  | Create a new task.           |
+ | `pct show`                   | Show all tasks the database. |
+ | `pct show <Enter task ID>`   | Show a specific task.        |
+ | `pct start <Enter task ID>`  | Start a specific task.       |
+ | `pct block <Enter task ID>`  | Block a specific task.       |
+ | `pct cancel <Enter task ID>` | Cancel a specific task.      |
+ | `pct pause <Enter task ID>`  | Pause a specific task.       |
+ | `pct finish <Enter task ID>` | Check off a specific task.   |
+ | `pct delete <Enter task ID>` | Delete a specific task.      |
+ | `pct help`                   | Show the help menu.          |
+ |------------------------------+------------------------------|
 
 ## Feedback
 I value your feedback! If you encounter any issues, have suggestions, or want to report a bug, 
