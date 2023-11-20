@@ -92,7 +92,7 @@ fn parse_cli(conn: &Connection, args: Cli) -> Result<String, CliError> {
 fn parse_num(num_string: String) -> Result<i64, CliError> {
     Ok(num_string.parse::<i64>()?)
 }
-
+#[cfg(test)]
 #[test]
 fn test_commands() {
     let conn = Connection::open_in_memory().expect("Failed to create in-memory database");

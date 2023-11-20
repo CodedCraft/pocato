@@ -4,6 +4,7 @@ mod crud;
 mod lexer;
 mod database;
 mod error;
+mod config;
 mod task;
 
 fn main() {

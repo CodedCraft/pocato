@@ -1,10 +1,11 @@
 // task.rs
 
+use crate::config;
 use chrono::prelude::*;
+use colored::*;
 use core::fmt;
 use tabled::Tabled;
 use uuid::Uuid;
-use colored::*;
 
 // Define and implement Task -----------------------------------------------------------------------
 #[derive(Debug, Clone, Tabled)]
@@ -80,27 +81,27 @@ impl TaskState {
         }
     }
     pub fn get_icon(&self) -> ColoredString {
-        // Alternative icons when Nerdfonts are not available:
-        // ---------------------------------------------------
-        // match self {
-        //     TaskState::Pending => "[ ]".white(), 
-        //     TaskState::Started => "[|]".yellow(),
-        //     TaskState::Finished => "[√]".green(),  
-        //     TaskState::Blocked => "[#]".blue(),   
-        //     TaskState::Someday => "[~]".yellow(), 
-        //     TaskState::Cancelled => "[x]".red(),  
-        //     TaskState::Paused => "[-]".white(),   
-        // }
-        // ---------------------------------------------------
-
-        match self {
-            TaskState::Pending => "".white(), 
-            TaskState::Started => "".yellow(),
-            TaskState::Finished => "".green(),  
-            TaskState::Blocked => "".blue(),   
-            TaskState::Someday => "".yellow(), 
-            TaskState::Cancelled => "".red(),  
-            TaskState::Paused => "".white(),   
+        if config::CONFIG.nerd_font {
+            match self {
+                TaskState::Pending => "".white(),
+                TaskState::Started => "".yellow(),
+                TaskState::Finished => "".green(),
+                TaskState::Blocked => "".blue(),
+                TaskState::Someday => "".yellow(),
+                TaskState::Cancelled => "".red(),
+                TaskState::Paused => "".white(),
+            }
+        } else {
+            // Alternative icons when Nerdfonts are not available:
+            match self {
+                TaskState::Pending => "[ ]".white(),
+                TaskState::Started => "[|]".yellow(),
+                TaskState::Finished => "[√]".green(),
+                TaskState::Blocked => "[#]".blue(),
+                TaskState::Someday => "[~]".yellow(),
+                TaskState::Cancelled => "[x]".red(),
+                TaskState::Paused => "[-]".white(),
+            }
         }
     }
 }

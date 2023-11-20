@@ -4,7 +4,9 @@ mod crud;
 mod database;
 mod error;
 mod lexer;
+mod config;
 mod task;
+
 
 fn main() {
     // Establish SQLite Database connection
