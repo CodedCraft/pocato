@@ -12,7 +12,7 @@
 
   - [Introduction](#introduction)
   - [Features](#features)
-  - [Installation](#installation)
+  - [Installation](#installation-linux)
   - [Usage](#usage)
   - [Feedback](#feedback)
   - [Tech Stack](#tech-stack)
@@ -62,7 +62,7 @@ To use Pocato, you need to have rust and cargo installed on your system.
 Here are all commands to get you started:
 
  | Command + <argument>         | Description                  |
- |------------------------------+------------------------------|
+ |------------------------------|------------------------------|
  | `pct add <Enter task name>`  | Create a new task.           |
  | `pct show`                   | Show all tasks the database. |
  | `pct show <Enter task ID>`   | Show a specific task.        |
@@ -73,7 +73,7 @@ Here are all commands to get you started:
  | `pct finish <Enter task ID>` | Check off a specific task.   |
  | `pct delete <Enter task ID>` | Delete a specific task.      |
  | `pct help`                   | Show the help menu.          |
- |------------------------------+------------------------------|
+ |------------------------------|------------------------------|
 
 ## Feedback
 I value your feedback! If you encounter any issues, have suggestions, or want to report a bug, 
